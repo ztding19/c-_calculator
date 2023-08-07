@@ -110,13 +110,13 @@ namespace calculator
 
         private void historyBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            // TODO : Connect database.
         }
 
         private string InorderToPostorder(string inorder) 
         {
             string postorder = "";
-            Stack<char> stack = new Stack<char>();
+            Stack<char> stack = new();
             for(int i = 0; i<inorder.Length; i++)
             {
                 if (operators.Contains(inorder[i])){
@@ -141,25 +141,20 @@ namespace calculator
         private string InorderToPreorder(string inorder)
         {
             inorder = new string(inorder.Reverse().ToArray());
-            string preorder = new string(InorderToPostorder(inorder).Reverse().ToArray());
+            string preorder = new(InorderToPostorder(inorder).Reverse().ToArray());
             return preorder;
         }
 
-        private int OperatorPriority(char oper)
+        private static int OperatorPriority(char oper)
         {
-            switch (oper)
+            return oper switch
             {
-                case '+':
-                    return 1;
-                case '-':
-                    return 1;
-                case '*':
-                    return 2;
-                case '/':
-                    return 2;
-                default: 
-                    return 0;
-            }
+                '+' => 1,
+                '-' => 1,
+                '*' => 2,
+                '/' => 2,
+                _ => 0,
+            };
         }
     }
 }
