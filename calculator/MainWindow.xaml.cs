@@ -97,12 +97,12 @@ namespace calculator
 
         private void equalBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            postorder.Text = InorderToPostorder(inorder.Text);
         }
 
         private void clearBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            inorder.Text = null;
         }
 
         private void historyBtn_Click(object sender, RoutedEventArgs e)
@@ -114,15 +114,43 @@ namespace calculator
         {
             string postorder = "";
             Stack<char> stack = new Stack<char>();
-            String operators = "+-*/";
+            string operators = "+-*/";
             for(int i = 0; i<inorder.Length; i++)
             {
                 if (operators.Contains(inorder[i])){
-
+                    while ( stack.Count != 0 && OperatorPriority(stack.Peek()) >= OperatorPriority(inorder[i]))
+                    {
+                        postorder += stack.Pop();
+                    }
+                    stack.Push(inorder[i]);
+                }
+                else
+                {
+                    postorder += inorder[i];
                 }
             }
-
+            while( stack.Count != 0 )
+            {
+                postorder += stack.Pop();
+            }
             return postorder;
+        }
+
+        private int OperatorPriority(char oper)
+        {
+            switch (oper)
+            {
+                case '+':
+                    return 1;
+                case '-':
+                    return 1;
+                case '*':
+                    return 2;
+                case '/':
+                    return 2;
+                default: 
+                    return 0;
+            }
         }
     }
 }
