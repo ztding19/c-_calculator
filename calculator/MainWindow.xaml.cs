@@ -101,6 +101,8 @@ namespace calculator
         {
             postorder.Text = InorderToPostorder(inorder.Text);
             preorder.Text = InorderToPreorder(inorder.Text);
+            resultDec.Text = PostorderCalculate(postorder.Text);
+            resultBin.Text = Convert.ToString(Convert.ToInt32(resultDec.Text), 2);
         }
 
         private void clearBtn_Click(object sender, RoutedEventArgs e)
@@ -143,6 +145,44 @@ namespace calculator
             inorder = new string(inorder.Reverse().ToArray());
             string preorder = new(InorderToPostorder(inorder).Reverse().ToArray());
             return preorder;
+        }
+
+        private string PostorderCalculate(string postorder)
+        {
+            float a, b;
+            Stack<float> stack = new();
+            for (int i = 0; i < postorder.Length; i++)
+            {
+                switch (postorder[i]) 
+                {
+                    case '+':
+                        b = (float)stack.Pop();
+                        a = (float)stack.Pop();
+                        stack.Push(a + b);
+                        break;
+                    case '-':
+                        b = (float)stack.Pop();
+                        a = (float)stack.Pop();
+                        stack.Push(a - b);
+                        break;
+                    case '*':
+                        b = (float)stack.Pop();
+                        a = (float)stack.Pop();
+                        stack.Push(a * b);
+                        break;
+                    case '/':
+                        b = (float)stack.Pop();
+                        a = (float)stack.Pop();
+                        stack.Push(a / b);
+                        break;
+                    default:
+                        stack.Push(postorder[i]-48);
+                        break;
+                }
+            }
+
+            return Math.Round(stack.Peek(), 0).ToString();
+            //return stack.Peek().ToString();
         }
 
         private static int OperatorPriority(char oper)
