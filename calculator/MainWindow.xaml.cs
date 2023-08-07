@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,6 +21,7 @@ namespace calculator
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly string operators = "+-*/";
         public MainWindow()
         {
             InitializeComponent();
@@ -98,6 +100,7 @@ namespace calculator
         private void equalBtn_Click(object sender, RoutedEventArgs e)
         {
             postorder.Text = InorderToPostorder(inorder.Text);
+            preorder.Text = InorderToPreorder(inorder.Text);
         }
 
         private void clearBtn_Click(object sender, RoutedEventArgs e)
@@ -114,7 +117,6 @@ namespace calculator
         {
             string postorder = "";
             Stack<char> stack = new Stack<char>();
-            string operators = "+-*/";
             for(int i = 0; i<inorder.Length; i++)
             {
                 if (operators.Contains(inorder[i])){
@@ -134,6 +136,13 @@ namespace calculator
                 postorder += stack.Pop();
             }
             return postorder;
+        }
+
+        private string InorderToPreorder(string inorder)
+        {
+            inorder = new string(inorder.Reverse().ToArray());
+            string preorder = new string(InorderToPostorder(inorder).Reverse().ToArray());
+            return preorder;
         }
 
         private int OperatorPriority(char oper)
