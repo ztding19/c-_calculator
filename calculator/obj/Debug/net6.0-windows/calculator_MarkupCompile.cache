@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET6_0;NETCOREAPP
 D:\Ting\NCU_HCI\0\calculator\calculator\App.xaml
-11407045341
+3311706318
 
-3-1233169557
+5-1382156553
 2021716014129
-MainWindow.xaml;
+HistoryWindow.xaml;MainWindow.xaml;Window1.xaml;
 
 False
 

@@ -37,3 +37,7 @@ D:\Ting\NCU_HCI\0\calculator\calculator\bin\Debug\net6.0-windows\runtimes\win-x6
 D:\Ting\NCU_HCI\0\calculator\calculator\bin\Debug\net6.0-windows\runtimes\win-x64\native\krbcc64.dll
 D:\Ting\NCU_HCI\0\calculator\calculator\bin\Debug\net6.0-windows\runtimes\browser\lib\net6.0\System.Text.Encodings.Web.dll
 D:\Ting\NCU_HCI\0\calculator\calculator\obj\Debug\net6.0-windows\calculator.csproj.CopyComplete
+D:\Ting\NCU_HCI\0\calculator\calculator\obj\Debug\net6.0-windows\HistoryWindow.g.cs
+D:\Ting\NCU_HCI\0\calculator\calculator\obj\Debug\net6.0-windows\Window1.g.cs
+D:\Ting\NCU_HCI\0\calculator\calculator\obj\Debug\net6.0-windows\HistoryWindow.baml
+D:\Ting\NCU_HCI\0\calculator\calculator\obj\Debug\net6.0-windows\Window1.baml

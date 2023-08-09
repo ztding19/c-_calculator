@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MySql.Data.MySqlClient;
 
 namespace calculator
 {
@@ -22,9 +24,12 @@ namespace calculator
     public partial class MainWindow : Window
     {
         private readonly string operators = "+-*/";
+        private readonly string connectionString = "server=127.0.0.1;uid=root;database=csharp";
+        MySqlConnection conn = new MySqlConnection();
         public MainWindow()
         {
             InitializeComponent();
+            conn.ConnectionString = connectionString;
         }
 
         private void _1btn_Click(object sender, RoutedEventArgs e)
@@ -103,17 +108,53 @@ namespace calculator
             preorder.Text = InorderToPreorder(inorder.Text);
             resultDec.Text = PostorderCalculate(postorder.Text);
             resultBin.Text = Convert.ToString(Convert.ToInt32(resultDec.Text), 2);
-            inorder.Text = "";
         }
 
         private void clearBtn_Click(object sender, RoutedEventArgs e)
         {
             inorder.Text = null;
+            postorder.Text = null;
+            preorder.Text = null;
+            resultDec.Text = null;
+            resultBin.Text = null;
         }
 
         private void historyBtn_Click(object sender, RoutedEventArgs e)
         {
             // TODO : Connect database.
+        }
+
+        private void insertBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (conn.State != ConnectionState.Open)
+                conn.Open();
+            if (inorder.Text != null && preorder.Text != null)
+            {
+                string sql = string.Format(@"SELECT Id FROM calculator_history WHERE Infix='{0}'", inorder.Text);
+                MySqlCommand cmd = new MySqlCommand(sql, conn);
+                MySqlDataReader myData = cmd.ExecuteReader();
+                if (myData.HasRows)
+                {
+                    MessageBox.Show("紀錄重複！");
+                    myData.Close();
+                    return;
+                }
+                myData.Close();
+                try
+                {
+                    sql = string.Format(@"INSERT INTO `calculator_history` (`Infix`, `Prefix`, `Postfix`, `DecimalResult`, `BinaryResult`) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}');", inorder.Text, preorder.Text, postorder.Text, resultDec.Text, resultBin.Text);
+                    cmd = new MySqlCommand(sql, conn);
+                    int index = cmd.ExecuteNonQuery();
+                    MessageBox.Show("紀錄成功！");
+                        
+                }catch (MySqlException ex)
+                {
+                    MessageBox.Show("Error : " + ex.Number + ", " + ex.Message);
+                }
+                
+            }
+            conn.Close();
+            return;
         }
 
         private string InorderToPostorder(string inorder) 
@@ -197,5 +238,7 @@ namespace calculator
                 _ => 0,
             };
         }
+
+
     }
 }
