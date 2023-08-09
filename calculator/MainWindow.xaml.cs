@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,6 +21,7 @@ namespace calculator
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly string operators = "+-*/";
         public MainWindow()
         {
             InitializeComponent();
@@ -97,32 +99,103 @@ namespace calculator
 
         private void equalBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            postorder.Text = InorderToPostorder(inorder.Text);
+            preorder.Text = InorderToPreorder(inorder.Text);
+            resultDec.Text = PostorderCalculate(postorder.Text);
+            resultBin.Text = Convert.ToString(Convert.ToInt32(resultDec.Text), 2);
+            inorder.Text = "";
         }
 
         private void clearBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            inorder.Text = null;
         }
 
         private void historyBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            // TODO : Connect database.
         }
 
         private string InorderToPostorder(string inorder) 
         {
             string postorder = "";
-            Stack<char> stack = new Stack<char>();
-            String operators = "+-*/";
+            Stack<char> stack = new();
             for(int i = 0; i<inorder.Length; i++)
             {
                 if (operators.Contains(inorder[i])){
+                    while ( stack.Count != 0 && OperatorPriority(stack.Peek()) >= OperatorPriority(inorder[i]))
+                    {
+                        postorder += stack.Pop();
+                    }
+                    stack.Push(inorder[i]);
+                }
+                else
+                {
+                    postorder += inorder[i];
+                }
+            }
+            while( stack.Count != 0 )
+            {
+                postorder += stack.Pop();
+            }
+            return postorder;
+        }
 
+        private string InorderToPreorder(string inorder)
+        {
+            inorder = new string(inorder.Reverse().ToArray());
+            string preorder = new(InorderToPostorder(inorder).Reverse().ToArray());
+            return preorder;
+        }
+
+        private string PostorderCalculate(string postorder)
+        {
+            float a, b;
+            Stack<float> stack = new();
+            for (int i = 0; i < postorder.Length; i++)
+            {
+                switch (postorder[i]) 
+                {
+                    case '+':
+                        b = (float)stack.Pop();
+                        a = (float)stack.Pop();
+                        stack.Push(a + b);
+                        break;
+                    case '-':
+                        b = (float)stack.Pop();
+                        a = (float)stack.Pop();
+                        stack.Push(a - b);
+                        break;
+                    case '*':
+                        b = (float)stack.Pop();
+                        a = (float)stack.Pop();
+                        stack.Push(a * b);
+                        break;
+                    case '/':
+                        b = (float)stack.Pop();
+                        a = (float)stack.Pop();
+                        stack.Push(a / b);
+                        break;
+                    default:
+                        stack.Push(postorder[i]-48);
+                        break;
                 }
             }
 
-            return postorder;
+            return Math.Round(stack.Peek(), 0).ToString();
+            //return stack.Peek().ToString();
+        }
+
+        private static int OperatorPriority(char oper)
+        {
+            return oper switch
+            {
+                '+' => 1,
+                '-' => 1,
+                '*' => 2,
+                '/' => 2,
+                _ => 0,
+            };
         }
     }
 }
