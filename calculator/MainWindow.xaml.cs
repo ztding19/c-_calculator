@@ -103,6 +103,7 @@ namespace calculator
             preorder.Text = InorderToPreorder(inorder.Text);
             resultDec.Text = PostorderCalculate(postorder.Text);
             resultBin.Text = Convert.ToString(Convert.ToInt32(resultDec.Text), 2);
+            inorder.Text = "";
         }
 
         private void clearBtn_Click(object sender, RoutedEventArgs e)
