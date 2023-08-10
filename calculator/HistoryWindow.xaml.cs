@@ -22,18 +22,20 @@ namespace calculator
     {
         private readonly string connectionString = "server=127.0.0.1;uid=root;database=csharp";
         MySqlConnection conn = new MySqlConnection();
+        List<string> ids = new List<string>();
         public HistoryWindow()
         {
             InitializeComponent();
+            conn.ConnectionString = connectionString;
             Refresh();
             
         }
 
         private void Refresh()
         {
+            ids.Clear();
             try
             {
-                conn.ConnectionString = connectionString;
                 if (conn.State != System.Data.ConnectionState.Open)
                     conn.Open();
             }
@@ -63,6 +65,8 @@ namespace calculator
                     checkBox.HorizontalAlignment = HorizontalAlignment.Center;
                     checkBox.VerticalAlignment = VerticalAlignment.Center;
                     checkBox.Width = 15;
+                    checkBox.Checked += CheckBox_Checked;
+                    checkBox.Unchecked += CheckBox_Unchecked;
                     historyGrid.Children.Add(checkBox);
                     Grid.SetRow(checkBox, i);
                     for (int j = 1; j <= 5; j++)
@@ -86,6 +90,63 @@ namespace calculator
             {
                 MessageBox.Show("Error " + ex.Number + " : " + ex.Message);
             }
+        }
+
+        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            //throw new NotImplementedException();
+            try
+            {
+                ids.Remove(((CheckBox)sender).Content.ToString());
+            }
+            catch
+            {
+                MessageBox.Show("Ids removing failed.");
+            }
+        }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            //throw new NotImplementedException();
+            //MessageBox.Show(((CheckBox)sender).Content.ToString());
+            ids.Add(((CheckBox)sender).Content.ToString());
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (conn.State != System.Data.ConnectionState.Open)
+                    conn.Open();
+            }
+            catch (MySql.Data.MySqlClient.MySqlException ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
+
+            try
+            {
+                //MessageBox.Show(ids.Count.ToString());
+                bool isAnyBoxChecked = false;
+                string condition = "Id IN (";
+                foreach (string id in ids)
+                {
+                    condition += "'" + id + "', ";
+                }
+                condition = condition.Substring(0, condition.Length - 2);
+                condition += ")";
+
+                string sql = @"DELETE FROM calculator_history WHERE "+ condition;
+                MessageBox.Show(sql);
+                MySqlCommand cmd = new MySqlCommand(sql, conn);
+                int index = cmd.ExecuteNonQuery();
+                MessageBox.Show(index.ToString());
+            }
+            catch (MySqlException ex)
+            {
+                    MessageBox.Show(ex.Message);
+            } 
         }
     }
 }
