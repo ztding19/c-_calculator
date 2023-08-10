@@ -34,6 +34,7 @@ namespace calculator
         private void Refresh()
         {
             ids.Clear();
+            historyGrid.Children.RemoveRange(6, 48);
             try
             {
                 if (conn.State != System.Data.ConnectionState.Open)
@@ -107,8 +108,6 @@ namespace calculator
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            //throw new NotImplementedException();
-            //MessageBox.Show(((CheckBox)sender).Content.ToString());
             ids.Add(((CheckBox)sender).Content.ToString());
         }
 
@@ -127,21 +126,21 @@ namespace calculator
 
             try
             {
-                //MessageBox.Show(ids.Count.ToString());
                 bool isAnyBoxChecked = false;
                 string condition = "Id IN (";
                 foreach (string id in ids)
                 {
+                    isAnyBoxChecked = true;
                     condition += "'" + id + "', ";
                 }
+                if (!isAnyBoxChecked) return;
                 condition = condition.Substring(0, condition.Length - 2);
                 condition += ")";
 
                 string sql = @"DELETE FROM calculator_history WHERE "+ condition;
-                MessageBox.Show(sql);
                 MySqlCommand cmd = new MySqlCommand(sql, conn);
                 int index = cmd.ExecuteNonQuery();
-                MessageBox.Show(index.ToString());
+                Refresh();
             }
             catch (MySqlException ex)
             {
