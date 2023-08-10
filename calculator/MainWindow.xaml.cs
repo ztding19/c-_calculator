@@ -121,7 +121,8 @@ namespace calculator
 
         private void historyBtn_Click(object sender, RoutedEventArgs e)
         {
-            // TODO : Connect database.
+            HistoryWindow w = new HistoryWindow();
+            w.Show();
         }
 
         private void insertBtn_Click(object sender, RoutedEventArgs e)
